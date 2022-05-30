@@ -9,9 +9,9 @@ const getUser = asyncHandler(async (req, res) => {
 
 const createUser = asyncHandler(async (req, res) => {
   let token
-  const { username, password } = req.body
+  const { username, password, passwordConfirm } = req.body
 
-  if (!username || !password) {
+  if (!username || !password || !passwordConfirm) {
     res.status(400)
     throw new Error("Please input valid credentials.")
   }
@@ -22,6 +22,12 @@ const createUser = asyncHandler(async (req, res) => {
     res.status(400)
     throw new Error("User already exists.")
   }
+
+  if (password !== passwordConfirm) {
+    res.status(400)
+    throw new Error("Passwords don't match.")
+  }
+
   salt = await bcrypt.genSalt(10)
   hashedPassword = await bcrypt.hash(password, salt)
 
@@ -61,18 +67,17 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({ username })
 
-  if (user && (await bcrypt.compare(password, user.password))){
+  if (user && (await bcrypt.compare(password, user.password))) {
     res.status(200)
     res.json({
       id: user._id,
       username: user.username,
       password: user.password,
-      token: generateToken(user._id)
+      token: generateToken(user._id),
     })
-  }
-  else {
+  } else {
     res.status(400)
-    throw new Error ('Invalid Credentials.')
+    throw new Error("Invalid Credentials.")
   }
 })
 
