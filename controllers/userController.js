@@ -61,8 +61,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body
 
   if (!username || !password) {
-    res.status(400)
-    throw new Error("Please input username and password.")
+    res.json({ message: "Please input all fields." })
   }
 
   const user = await User.findOne({ username })
@@ -70,14 +69,14 @@ const loginUser = asyncHandler(async (req, res) => {
   if (user && (await bcrypt.compare(password, user.password))) {
     res.status(200)
     res.json({
+      message: "Success",
       id: user._id,
       username: user.username,
       password: user.password,
       token: generateToken(user._id),
     })
   } else {
-    res.status(400)
-    throw new Error("Invalid Credentials.")
+    res.json({ message: "Invalid credentials." })
   }
 })
 
