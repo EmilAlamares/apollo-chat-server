@@ -12,8 +12,7 @@ const createUser = asyncHandler(async (req, res) => {
   const { username, password, passwordConfirm } = req.body
 
   if (!username || !password || !passwordConfirm) {
-    res.status(400)
-    throw new Error("Please input valid credentials.")
+    res.json({ message: "Please input all fields." })
   }
 
   const userExists = await User.findOne({ username })
@@ -24,8 +23,7 @@ const createUser = asyncHandler(async (req, res) => {
   }
 
   if (password !== passwordConfirm) {
-    res.status(400)
-    throw new Error("Passwords don't match.")
+    res.json({ message: "Passwords don't match." })
   }
 
   salt = await bcrypt.genSalt(10)
@@ -44,8 +42,7 @@ const createUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     })
   } else {
-    res.status(200)
-    throw new Error("Invalid data.")
+res.json({ message: "Invalid Credentials." })
   }
 })
 
