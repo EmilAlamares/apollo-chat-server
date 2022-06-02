@@ -38,7 +38,6 @@ const createUser = asyncHandler(async (req, res) => {
     res.json({
       message: "Success",
       username,
-      password: hashedPassword,
       token: generateToken(user._id),
     })
   } else {
@@ -64,12 +63,9 @@ const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ username })
 
   if (user && (await bcrypt.compare(password, user.password))) {
-    res.status(200)
     res.json({
       message: "Success",
-      id: user._id,
       username: user.username,
-      password: user.password,
       token: generateToken(user._id),
     })
   } else {
