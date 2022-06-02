@@ -18,8 +18,7 @@ const createUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ username })
 
   if (userExists) {
-    res.status(400)
-    throw new Error("User already exists.")
+    res.json({message: "User already exists."})
   }
 
   if (password !== passwordConfirm) {
@@ -35,7 +34,6 @@ const createUser = asyncHandler(async (req, res) => {
   })
 
   if (user) {
-    res.status(200)
     res.json({
       username,
       password: hashedPassword,
