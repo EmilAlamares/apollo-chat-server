@@ -1,18 +1,34 @@
-const express = require('express')
-const cors = require('cors')
-require('dotenv').config()
-const userRoutes = require('./routers/userRouter.js')
-const {connectDatabase} = require("./config/database")
-const server = express()
+const express = require("express")
+const cors = require("cors")
+require("dotenv").config()
+const userRoutes = require("./routers/userRouter.js")
+const { connectDatabase } = require("./config/database")
+const app = express()
 const PORT = process.env.PORT
+const socketio = require('socket.io')
 
 connectDatabase()
 
-server.use(express.json())
-server.use(express.urlencoded({extended: false}))
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(cors())
+app.use("/users", userRoutes)
 
-server.use(cors())
+const server = require("http").createServer(app)
+const io = socketio(server, { 
+    cors: {
+        origin: ["http://localhost:3000"]
+    }
+})
 
-server.use('/users', userRoutes)
+io.on('connection', socket => {
+    console.log(`New connection... ${socket.id}`)
 
-server.listen(PORT, () => console.log(`Server started... Listening on port: ${PORT}`))
+    socket.on('new-message', msg => {
+        console.log(msg)
+        socket.emit('server-new-message', 'reply')
+    })
+})
+
+
+server.listen(PORT, () => console.log(`Listening on PORT: ${PORT}`))
