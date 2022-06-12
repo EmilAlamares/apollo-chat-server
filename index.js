@@ -25,7 +25,7 @@ io.on('connection', socket => {
     console.log(`New connection... ${socket.id}`)
 
     socket.on('new-message', msg => {
-        console.log(msg)
+        console.log(`${socket.id}: ${msg}`)
         socket.emit('server-new-message', 'reply')
     })
 })
