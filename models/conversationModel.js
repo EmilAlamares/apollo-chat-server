@@ -5,6 +5,9 @@ const conversationSchema = mongoose.Schema(
     users: {
       type: Array,
     },
+    usersName: {
+      type: Array,
+    }
   },
   { timestamps: true }
 )

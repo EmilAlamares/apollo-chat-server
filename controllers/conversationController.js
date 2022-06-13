@@ -3,21 +3,19 @@ const Conversation = require("../models/conversationModel")
 
 const getConversation = asyncHandler(async (req, res) => {
   const userId = req.user.id
-
   try {
-    const conversation = await Conversation.find({userId})
-    res.json({conversation})
+    const conversation = await Conversation.find({ users: {$in: userId} })
+    res.json({ conversation })
   } catch (err) {
     console.log(err)
   }
-
 })
 
 const createConversation = asyncHandler(async (req, res) => {
-  if (!req.body.senderId || !req.body.receiverId)
+  if (!req.body.userOneId || !req.body.userTwoId || !req.body.userOneName || !req.body.userTwoName)
     return res.json({ msg: "Please input all fields." })
 
-  const data = [req.body.senderId, req.body.receiverId]
+  const data = [req.body.userOneId, req.body.userTwoId]
   const convExists = await Conversation.findOne({ users: { $in: data } })
 
   if (convExists) {
@@ -26,7 +24,8 @@ const createConversation = asyncHandler(async (req, res) => {
 
   try {
     const conversation = await Conversation.create({
-      users: [req.body.senderId, req.body.receiverId],
+      users: [req.body.userOneId, req.body.userTwoId],
+      usersName: [req.body.userOneName, req.body.userTwoName]
     })
     res.json(conversation)
   } catch (err) {

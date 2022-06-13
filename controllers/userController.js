@@ -4,7 +4,10 @@ const bcrypt = require("bcrypt")
 const asyncHandler = require("express-async-handler")
 
 const getUser = asyncHandler(async (req, res) => {
-  res.send("Get user")
+  // Secure this in the future.
+  const user = await User.findOne({ username })
+  if (user) 
+  res.json(user)
 })
 
 const createUser = asyncHandler(async (req, res) => {
@@ -64,6 +67,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
       message: "Success",
+      id : user._id,
       username: user.username,
       token: generateToken(user._id),
     })
