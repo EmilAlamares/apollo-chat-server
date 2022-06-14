@@ -11,12 +11,13 @@ const getConversation = asyncHandler(async (req, res) => {
   }
 })
 
+
 const createConversation = asyncHandler(async (req, res) => {
-  if (!req.body.userOneId || !req.body.userTwoId || !req.body.userOneName || !req.body.userTwoName)
+  if (!req.body.userOneId || !req.body.userTwoId) 
     return res.json({ msg: "Please input all fields." })
 
-  const data = [req.body.userOneId, req.body.userTwoId]
-  const convExists = await Conversation.findOne({ users: { $in: data } })
+  const data = [req.body.userOneId, req.body.userTwoId].sort()
+  const convExists = await Conversation.findOne({ users:  data })
 
   if (convExists) {
     return res.json({ msg: "Conversation already exists." })

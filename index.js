@@ -3,6 +3,7 @@ const cors = require("cors")
 require("dotenv").config()
 const userRoutes = require("./routers/userRouter.js")
 const conversationRoutes = require("./routers/conversationRouter.js")
+const messageRoutes = require("./routers/messageRouter.js")
 const { connectDatabase } = require("./config/database")
 const app = express()
 const PORT = process.env.PORT
@@ -15,7 +16,8 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cors())
 
 app.use("/users", userRoutes)
-app.use("/conversation", conversationRoutes)
+app.use("/conversations", conversationRoutes)
+app.use("/messages", messageRoutes)
 
 const server = require("http").createServer(app)
 const io = socketio(server, { 
