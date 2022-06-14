@@ -13,7 +13,7 @@ const getConversation = asyncHandler(async (req, res) => {
 
 
 const createConversation = asyncHandler(async (req, res) => {
-  if (!req.body.userOneId || !req.body.userTwoId) 
+  if (!req.body.userOneId || !req.body.userTwoId || !req.body.userOneName || !req.body.userTwoName) 
     return res.json({ msg: "Please input all fields." })
 
   const data = [req.body.userOneId, req.body.userTwoId].sort()

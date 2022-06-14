@@ -25,10 +25,8 @@ const createMessage = asyncHandler(async (req, res) => {
   const convExists = await Conversation.findOne({ users: data })
 
   if (convExists) {
-    console.log(convExists)
     return res.json({ msg: "Conversation exists." })
   } else {
-    console.log(convExists)
     return res.json({ msg: "New conversation must be initialized." })
   }
 
