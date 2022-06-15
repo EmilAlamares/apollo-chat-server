@@ -3,13 +3,20 @@ const Message = require("../models/messageModel")
 const Conversation = require("../models/conversationModel")
 
 const getMessage = asyncHandler(async (req, res) => {
-  const userId = req.user.id
+  // const authId = req.user.id // The id that would come from the decoded token.
+  const userId = req.user.id // The id from the body.
+
+
+  // if (userId === authId) Comparing both id's to verify the identity of the user getting his own messages.
+
   try {
-    const message = await Message.find({ users: { $in: userId } })
-    res.json({ message })
+    const message = await Message.find( {users: userId  })
+    return res.json({ message })
   } catch (err) {
-    console.log(err)
+    return res.json({err})
   }
+
+  // return res.json({msg: "Not authorized."})
 })
 
 const createMessage = asyncHandler(async (req, res) => {
@@ -25,20 +32,20 @@ const createMessage = asyncHandler(async (req, res) => {
   const convExists = await Conversation.findOne({ users: data })
 
   if (convExists) {
-    return res.json({ msg: "Conversation exists." })
+    try {
+      const message = await Message.create({
+        conversationId: convExists.id,
+        senderId: req.body.senderId, 
+        recipientId: req.body.recipientId,
+        message: req.body.message,
+      })
+      return res.json({ message })
+    } catch (err) {
+      return res.json({err})
+    }
   } else {
     return res.json({ msg: "New conversation must be initialized." })
   }
-
-  //   try {
-  //     const message = await Message.create({
-  //       users: [req.body.senderId, req.body.recipientId],
-
-  //     })
-  //     res.json(message)
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
 })
 
 module.exports = { getMessage, createMessage }
