@@ -12,11 +12,6 @@ const messageSchema = mongoose.Schema(
       ref: "users",
       required: [true, "No sender id."],
     },
-    recipientId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-      required: [true, "No recipient id."],
-    },
     message: {
       type: String,
       required: [true, "Empty message field."],
