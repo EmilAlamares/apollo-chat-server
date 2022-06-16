@@ -7,7 +7,11 @@ const conversationSchema = mongoose.Schema(
     },
     usersName: {
       type: Array,
-    }
+    },
+    lastEntry: {
+      message: { type: String },
+      senderId: { type: mongoose.Schema.Types.ObjectId },
+    },
   },
   { timestamps: true }
 )

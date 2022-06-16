@@ -5,15 +5,17 @@ const Conversation = require("../models/conversationModel")
 const getMessage = asyncHandler(async (req, res) => {
   // const authId = req.user.id // The id that would come from the decoded token.
   const userId = req.user.id // The id from the body.
-  const {id} = req.params
+  const { id } = req.params
 
   // if (userId === authId) Comparing both id's to verify the identity of the user getting his own messages.
 
   try {
-    const message = await Message.find( {$and: [{users: userId}, {conversationId: id}]})
+    const message = await Message.find({
+      $and: [{ users: userId }, { conversationId: id }],
+    })
     return res.json({ message })
   } catch (err) {
-    return res.json({err})
+    return res.json({ err })
   }
 
   // return res.json({msg: "Not authorized."})
@@ -33,15 +35,23 @@ const createMessage = asyncHandler(async (req, res) => {
 
   if (convExists) {
     try {
-      const message = await Message.create({
-        conversationId: convExists.id,
-        senderId: req.body.senderId, 
-        recipientId: req.body.recipientId,
-        message: req.body.message,
-      })
+      const message = await Message.create(
+        {
+          conversationId: convExists.id,
+          senderId: req.body.senderId,
+          recipientId: req.body.recipientId,
+          message: req.body.message,
+        },
+        Conversation.updateOne(
+          { id: convExists.id },
+          { $set: { lastEntry: { message: req.body.message, senderId: req.body.senderId} },
+            $currentDate: {lastModified: true}
+         }
+        )
+      )
       return res.json({ message })
     } catch (err) {
-      return res.json({err})
+      return res.json({ err })
     }
   } else {
     return res.json({ msg: "New conversation must be initialized." })
