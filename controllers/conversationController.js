@@ -4,20 +4,34 @@ const Conversation = require("../models/conversationModel")
 const getConversation = asyncHandler(async (req, res) => {
   const userId = req.user.id
   try {
-    const conversation = await Conversation.find({ users: {$in: userId} })
+    const conversation = await Conversation.find({ users: { $in: userId } }).sort({_id : -1})
     res.json({ conversation })
   } catch (err) {
     console.log(err)
   }
 })
 
+const getSpecificConversation = asyncHandler(async (req, res) => {
+  const { id } = req.params
+  try {
+    const conversation = await Conversation.find({ _id: id })
+    res.json({ conversation })
+  } catch (err) {
+    console.log(err)
+  }
+})
 
 const createConversation = asyncHandler(async (req, res) => {
-  if (!req.body.userOneId || !req.body.userTwoId || !req.body.userOneName || !req.body.userTwoName) 
+  if (
+    !req.body.userOneId ||
+    !req.body.userTwoId ||
+    !req.body.userOneName ||
+    !req.body.userTwoName
+  )
     return res.json({ msg: "Please input all fields." })
 
   const data = [req.body.userOneId, req.body.userTwoId].sort()
-  const convExists = await Conversation.findOne({ users:  data })
+  const convExists = await Conversation.findOne({ users: data })
 
   if (convExists) {
     return res.json({ msg: "Conversation already exists." })
@@ -26,7 +40,7 @@ const createConversation = asyncHandler(async (req, res) => {
   try {
     const conversation = await Conversation.create({
       users: [req.body.userOneId, req.body.userTwoId],
-      usersName: [req.body.userOneName, req.body.userTwoName]
+      usersName: [req.body.userOneName, req.body.userTwoName],
     })
     res.json(conversation)
   } catch (err) {
@@ -34,4 +48,4 @@ const createConversation = asyncHandler(async (req, res) => {
   }
 })
 
-module.exports = { getConversation, createConversation }
+module.exports = { getConversation, getSpecificConversation, createConversation }

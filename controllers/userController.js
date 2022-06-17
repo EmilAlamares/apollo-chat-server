@@ -5,7 +5,8 @@ const asyncHandler = require("express-async-handler")
 
 const getUser = asyncHandler(async (req, res) => {
   // Secure this in the future.
-  const user = await User.findOne({ username })
+  const {id} = req.params.id
+  const user = await User.findOne({ id }).select('-password')
   if (user) 
   res.json(user)
 })
