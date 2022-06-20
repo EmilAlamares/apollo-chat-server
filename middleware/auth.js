@@ -13,20 +13,20 @@ const authenticate = asyncHandler(async (req, res, next) => {
       const decode = jwt.verify(token, process.env.JWT_SECRET)
       req.user = await User.findById(decode.id).select("-password")
     } catch (err) {
-      res.json({message: "`Not authorized.`"})
+      return res.json({message: "Not authorized."})
     }
 
     if (!req.user) {
 
-      res.json({message: "User does not exist."})
+      return res.json({message: "User does not exist."})
     }
     next()
   } else {
-    res.json({message: "Bad token."})
+    return res.json({message: "Bad token."})
   }
 
   if (!token) {
-    res.json({message: "No token, not authorized."})
+    return res.json({message: "No token, not authorized."})
   }
 })
 

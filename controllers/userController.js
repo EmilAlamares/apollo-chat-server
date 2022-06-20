@@ -52,6 +52,7 @@ const updateUser = asyncHandler(async (req, res) => {
   res.send("Update user")
 })
 
+
 const deleteUser = asyncHandler(async (req, res) => {
   res.send("Delete")
 })
