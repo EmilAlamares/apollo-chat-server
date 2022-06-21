@@ -1,6 +1,6 @@
 const express = require("express")
 const {getHome} = require("../controllers/homeController")
-const {getUser, updateUser, deleteUser, createUser, loginUser} = require('../controllers/userController')
+const {getUser, searchUser, updateUser, deleteUser, createUser, loginUser} = require('../controllers/userController')
 const {authenticate} = require('../middleware/auth')
 const router = express.Router()
 
@@ -10,10 +10,11 @@ router.route('/')
     .put(updateUser)
     .delete(deleteUser)
 
+router.route('/:username')
+    .get(searchUser)
+
 router.route('/login')
     .post(loginUser)
 
-router.route('/home')
-    .get(authenticate, getHome)
 
 module.exports = router
