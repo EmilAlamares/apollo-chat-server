@@ -11,7 +11,7 @@ router.route('/')
     .delete(deleteUser)
 
 router.route('/:username')
-    .get(searchUser)
+    .get(authenticate, searchUser)
 
 router.route('/login')
     .post(loginUser)

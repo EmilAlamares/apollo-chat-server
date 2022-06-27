@@ -1,4 +1,5 @@
 const User = require("../models/userModel")
+const Conversation = require("../models/conversationModel")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const asyncHandler = require("express-async-handler")
@@ -7,16 +8,28 @@ const getUser = asyncHandler(async (req, res) => {
   // Secure this in the future.
   // const {id} = req.params.id
   // const user = await User.findOne({ id }).select('-password')
-  // if (user) 
+  // if (user)
   // res.json(user)
   const user = await User.find()
-  res.json({user})
+  res.json({ user })
 })
 
 const searchUser = asyncHandler(async (req, res) => {
-  const username = new RegExp(`^${req.params.username}`, "i");
-  const user = await User.find({username: username})
-  res.json({user})
+  let otherUsername = ''
+  const { username } = req.user
+  const usernameRegex = new RegExp(`^${req.params.username}`, "i")
+  // const user = await User.find({ username: usernameRegex })
+ 
+  // otherUsername = user[0].username
+
+  // const conversation = await Conversation.find({
+  //   usersName: [username, otherUsername],
+  // })
+
+  let user = await User.aggregate([{$lookup: {from: 'conversations', localField: 'username', foreignField: 'usersName', as: 'conversation'}}, {$match: {username: usernameRegex}}])
+  user = user.filter(user => user.username !== req.user.username)
+  
+  res.json({ user })
 })
 
 const createUser = asyncHandler(async (req, res) => {
@@ -30,7 +43,7 @@ const createUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ username })
 
   if (userExists) {
-      res.json({message: "Username already taken."})
+    res.json({ message: "Username already taken." })
   }
 
   if (password !== passwordConfirm) {
@@ -52,14 +65,13 @@ const createUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     })
   } else {
-res.json({ message: "Invalid Credentials." })
+    res.json({ message: "Invalid Credentials." })
   }
 })
 
 const updateUser = asyncHandler(async (req, res) => {
   res.send("Update user")
 })
-
 
 const deleteUser = asyncHandler(async (req, res) => {
   res.send("Delete")
@@ -77,7 +89,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (user && (await bcrypt.compare(password, user.password))) {
     res.json({
       message: "Success",
-      id : user._id,
+      id: user._id,
       username: user.username,
       token: generateToken(user._id),
     })
@@ -90,4 +102,11 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" })
 }
 
-module.exports = { getUser, searchUser, updateUser, createUser, deleteUser, loginUser }
+module.exports = {
+  getUser,
+  searchUser,
+  updateUser,
+  createUser,
+  deleteUser,
+  loginUser,
+}
