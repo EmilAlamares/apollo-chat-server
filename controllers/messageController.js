@@ -35,21 +35,25 @@ const createMessage = asyncHandler(async (req, res) => {
 
   if (convExists) {
     try {
-      const message = await Message.create(
+      const message = await Message.create({
+        conversationId: convExists.id,
+        senderId: req.body.senderId,
+        recipientId: req.body.recipientId,
+        message: req.body.message,
+      })
+      const conversation = await Conversation.updateOne(
+        { _id: convExists.id },
         {
-          conversationId: convExists.id,
-          senderId: req.body.senderId,
-          recipientId: req.body.recipientId,
-          message: req.body.message,
-        },
-        Conversation.updateOne(
-          { id: convExists.id },
-          { $set: { lastEntry: { message: req.body.message, senderId: req.body.senderId} },
-            $currentDate: {lastModified: true}
-         }
-        )
+          $set: {
+            lastEntry: {
+              message: req.body.message,
+              senderId: req.body.senderId,
+            },
+          },
+          $currentDate: { lastModified: true },
+        }
       )
-      return res.json({ message })
+      return res.json({ message, conversation })
     } catch (err) {
       return res.json({ err })
     }
@@ -59,3 +63,10 @@ const createMessage = asyncHandler(async (req, res) => {
 })
 
 module.exports = { getMessage, createMessage }
+
+//         Conversation.updateOne(
+//           { id: convExists.id },
+//           { $set: { lastEntry: { message: req.body.message, senderId: req.body.senderId} },
+//             $currentDate: {lastModified: true}
+//          }
+//         )
