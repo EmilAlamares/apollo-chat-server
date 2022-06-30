@@ -29,14 +29,26 @@ const io = socketio(server, {
     }
 })
 
+let usersList = [] // Storage of currently connected users.
+
 io.on('connection', socket => {
-    console.log(`New connection... ${socket.id}`)
+    let user = socket.handshake.query.user
+    usersList = [...usersList, {user, id: socket.id}]
+    console.log(`New connection... Socket ID: ${socket.id} - User Id: ${user}`)
+    console.log(usersList)
 
     socket.on('new-message', msg => {
-        console.log(`${socket.id}: ${msg}`)
-        socket.emit('server-new-message', 'reply')
+        console.log(`Message: ${msg.message} - To: ${msg.recipientId} - From: ${msg.senderId}`)
+        usersList.map(item => {
+            if (item.user = msg.recipientId)
+            socket.to(item.id).emit('receiveMsg', msg.message)
+        })
+    }) 
+
+    socket.on('disconnect', () => {
+        console.log(`User: ${user} connected on ${socket.id} has disconnected.`)
+        usersList = usersList.filter(user => socket.id !== user.id)
     })
 })
-
 
 server.listen(PORT, () => console.log(`Listening on PORT: ${PORT}`))
