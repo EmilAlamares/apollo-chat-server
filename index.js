@@ -40,7 +40,7 @@ io.on('connection', socket => {
     socket.on('new-message', msg => {
         console.log(`Message: ${msg.message} - To: ${msg.recipientId} - From: ${msg.senderId}`)
         usersList.map(item => {
-            if (item.user = msg.recipientId)
+            if (item.user === msg.recipientId)
             socket.to(item.id).emit('receiveMsg', msg.message)
         })
     }) 
