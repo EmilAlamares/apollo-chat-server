@@ -61,6 +61,7 @@ const createUser = asyncHandler(async (req, res) => {
   if (user) {
     res.json({
       message: "Success",
+      id: user._id,
       username,
       token: generateToken(user._id),
     })
