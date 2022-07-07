@@ -4,7 +4,7 @@ const Conversation = require("../models/conversationModel")
 const getConversation = asyncHandler(async (req, res) => {
   const userId = req.user.id
   try {
-    const conversation = await Conversation.find({ users: { $in: userId } }).sort({_id : -1})
+    const conversation = await Conversation.find({ users: { $in: userId } }).sort({updatedAt: -1})
     res.json({ conversation })
   } catch (err) {
     console.log(err)

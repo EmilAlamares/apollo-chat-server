@@ -50,7 +50,6 @@ const createMessage = asyncHandler(async (req, res) => {
               senderId: req.body.senderId,
             },
           },
-          $currentDate: { lastModified: true },
         }
       )
       return res.json({ message, conversation })
