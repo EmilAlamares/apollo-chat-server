@@ -12,6 +12,9 @@ const conversationSchema = mongoose.Schema(
       message: { type: String },
       senderId: { type: mongoose.Schema.Types.ObjectId },
     },
+    lastRead: {
+      type: Array,
+    },
   },
   { timestamps: true }
 )

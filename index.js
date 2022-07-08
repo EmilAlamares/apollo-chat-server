@@ -43,14 +43,25 @@ io.on('connection', socket => {
     console.log(usersList)
 
     socket.on('new-message', msg => {
-        console.log(`Message: ${msg.message} - To: ${msg.recipientId} - From: ${msg.senderId}`)
+        console.log(`Message: ${msg?.message} - To: ${msg?.recipientId} - From: ${msg?.senderId}`)
         usersList.map(item => {
-            if (item.user === msg.recipientId)
+            if (item.user === msg?.recipientId)
             {
                 socket.to(item.id).emit('receiveMsg', msg)
             }
         })
-    }) 
+    })
+
+    socket.on('new-conversation', conversation => {
+        usersList.map(item => {
+            if (item.user === conversation?.users[1])
+            {
+                socket.to(item.id).emit('receiveConv', conversation)
+            }
+        })
+    })
+
+
 
     socket.on('disconnect', () => {
         console.log(`User: ${user} connected on ${socket.id} has disconnected.`)

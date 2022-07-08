@@ -41,6 +41,7 @@ const createConversation = asyncHandler(async (req, res) => {
     const conversation = await Conversation.create({
       users: [req.body.userOneId, req.body.userTwoId],
       usersName: [req.body.userOneName, req.body.userTwoName],
+      lastEntry: {message: `${req.body.userOneName} has started a conversation.`}
     })
     res.json(conversation)
   } catch (err) {
