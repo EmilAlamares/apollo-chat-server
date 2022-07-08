@@ -39,8 +39,10 @@ let usersList = [] // Storage of currently connected users.
 io.on('connection', socket => {
     let user = socket.handshake.query.user
     usersList = [...usersList, {user, id: socket.id}]
-    console.log(`New connection... Socket ID: ${socket.id} - User Id: ${user}`)
     console.log(usersList)
+
+    socket.broadcast.emit('userOnline', user) // Let every client know current user went online.
+    socket.emit('currentOnline', usersList.map(onlineUser => onlineUser.user)) // Let connected client know who's currently online.
 
     socket.on('new-message', msg => {
         console.log(`Message: ${msg?.message} - To: ${msg?.recipientId} - From: ${msg?.senderId}`)
@@ -61,11 +63,11 @@ io.on('connection', socket => {
         })
     })
 
-
-
     socket.on('disconnect', () => {
         console.log(`User: ${user} connected on ${socket.id} has disconnected.`)
         usersList = usersList.filter(user => socket.id !== user.id)
+        filteredUsersList = usersList.map(onlineUser => onlineUser.user).filter(onlineUser => onlineUser !== user)
+        socket.broadcast.emit('userOffline', filteredUsersList) // Let every client know current user went offline.
     })
 })
 

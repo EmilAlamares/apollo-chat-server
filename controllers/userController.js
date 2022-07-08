@@ -6,10 +6,7 @@ const asyncHandler = require("express-async-handler")
 
 const getUser = asyncHandler(async (req, res) => {
   // Secure this in the future.
-  // const {id} = req.params.id
-  // const user = await User.findOne({ id }).select('-password')
-  // if (user)
-  // res.json(user)
+
   const user = await User.find()
   res.json({ user })
 })
@@ -18,13 +15,6 @@ const searchUser = asyncHandler(async (req, res) => {
   let otherUsername = ''
   const { username } = req.user
   const usernameRegex = new RegExp(`^${req.params.username}`, "i")
-  // const user = await User.find({ username: usernameRegex })
- 
-  // otherUsername = user[0].username
-
-  // const conversation = await Conversation.find({
-  //   usersName: [username, otherUsername],
-  // })
 
   let user = await User.aggregate([{$lookup: {from: 'conversations', localField: 'username', foreignField: 'usersName', as: 'conversation'}}, {$match: {username: usernameRegex}}])
   user = user.filter(user => user.username !== req.user.username)
