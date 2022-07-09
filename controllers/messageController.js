@@ -63,10 +63,3 @@ const createMessage = asyncHandler(async (req, res) => {
 })
 
 module.exports = { getMessage, createMessage }
-
-//         Conversation.updateOne(
-//           { id: convExists.id },
-//           { $set: { lastEntry: { message: req.body.message, senderId: req.body.senderId} },
-//             $currentDate: {lastModified: true}
-//          }
-//         )

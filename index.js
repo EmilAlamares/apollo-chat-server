@@ -64,10 +64,8 @@ io.on('connection', socket => {
     })
 
     socket.on('disconnect', () => {
-        console.log(`User: ${user} connected on ${socket.id} has disconnected.`)
-        usersList = usersList.filter(user => socket.id !== user.id)
-        filteredUsersList = usersList.map(onlineUser => onlineUser.user).filter(onlineUser => onlineUser !== user)
-        socket.broadcast.emit('userOffline', filteredUsersList) // Let every client know current user went offline.
+        usersList = usersList.filter(user => socket.id !== user.id) // Remove user from usersList.
+        socket.broadcast.emit('userOffline', usersList.map(onlineUser => onlineUser.user)) // Let every client know current user went offline.
     })
 })
 
