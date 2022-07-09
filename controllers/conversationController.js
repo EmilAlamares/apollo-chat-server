@@ -4,7 +4,7 @@ const Conversation = require("../models/conversationModel")
 const getConversation = asyncHandler(async (req, res) => {
   const userId = req.user.id
   try {
-    const conversation = await Conversation.find({ users: { $in: userId } }).sort({updatedAt: -1})
+    const conversation = await Conversation.find({ users: { $in: userId } }).sort({lastEntryModified: -1})
     res.json({ conversation })
   } catch (err) {
     console.log(err)
@@ -30,8 +30,8 @@ const createConversation = asyncHandler(async (req, res) => {
   )
     return res.json({ msg: "Please input all fields." })
 
-  const data = [req.body.userOneId, req.body.userTwoId].sort()
-  const convExists = await Conversation.findOne({ users: data })
+  const data = [req.body.userOneId, req.body.userTwoId]
+  const convExists = await Conversation.findOne({ users: {$all: data} })
 
   if (convExists) {
     return res.json({ msg: "Conversation already exists." })
@@ -41,7 +41,8 @@ const createConversation = asyncHandler(async (req, res) => {
     const conversation = await Conversation.create({
       users: [req.body.userOneId, req.body.userTwoId],
       usersName: [req.body.userOneName, req.body.userTwoName],
-      lastEntry: {message: `${req.body.userOneName} has started a conversation.`}
+      lastEntry: {message: `${req.body.userOneName} has started a conversation.`},
+      lastEntryModified: new Date()
     })
     res.json(conversation)
   } catch (err) {

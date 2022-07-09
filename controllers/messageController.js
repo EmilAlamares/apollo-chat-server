@@ -50,6 +50,7 @@ const createMessage = asyncHandler(async (req, res) => {
               message: req.body.message,
               senderId: req.body.senderId,
             },
+            lastEntryModified: new Date()
           },
         }
       )
