@@ -30,8 +30,9 @@ const createMessage = asyncHandler(async (req, res) => {
   }
 
   // Check if there is an existing conversation between the two users.
-  const data = [req.body.senderId, req.body.recipientId].sort()
-  const convExists = await Conversation.findOne({ users: data })
+  const data = [req.body.senderId, req.body.recipientId]
+  const convExists = await Conversation.findOne({ users: {$all: data} })
+  console.log(data)
 
   if (convExists) {
     try {
