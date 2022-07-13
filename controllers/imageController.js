@@ -8,7 +8,6 @@ const uploadImage = asyncHandler(async (req, res) => {
   const file = req.files.image
   const filename = req.body.filename
   const ext = file.name.split('.')[1]
-  console.log(file)
   file.mv(`${uploadsPath}/${filename}.${ext}`, (err) => {
     if (err) console.log(err)
   })

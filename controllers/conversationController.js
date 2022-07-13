@@ -41,7 +41,7 @@ const createConversation = asyncHandler(async (req, res) => {
     const conversation = await Conversation.create({
       users: [req.body.userOneId, req.body.userTwoId],
       usersName: [req.body.userOneName, req.body.userTwoName],
-      lastEntry: {message: `${req.body.userOneName} has started a conversation.`},
+      lastEntry: {message: `${req.body.userOneName} has started a conversation.`, senderId: req.body.userOneId},
       lastEntryModified: new Date()
     })
     res.json(conversation)
