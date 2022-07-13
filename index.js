@@ -30,7 +30,7 @@ app.use('/image', imageRoutes)
 const server = require("http").createServer(app)
 const io = socketio(server, { 
     cors: {
-        origin: ["http://localhost:3000"]
+        origin: ["http://apollo-chat-client.herokuapp.com"]
     }
 })
 
